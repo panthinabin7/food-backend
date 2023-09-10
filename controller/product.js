@@ -1,5 +1,3 @@
-const fs = require("fs");
-
 const model = require("../model/product");
 const Product = model.Product;
 

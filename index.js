@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const productRouter = require("./routes/product.js");
+const userRouter = require("./routes/CreateUser.js");
 
 main().catch((err) => console.log(err));
 
@@ -15,7 +16,8 @@ async function main() {
 
 // body parser
 app.use(express.json());
-app.use("/product", productRouter.router);
+app.use("/", productRouter.router);
+app.use("/api/", userRouter.router);
 
 app.listen(5000, () => {
   console.log("Server is running...");
