@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -8,7 +9,8 @@ main().catch((err) => console.log(err));
 
 async function main() {
   await mongoose.connect(
-    "mongodb+srv://panthinabin7:wg86pPSRKVMb2Aau@cluster0.9g3njsv.mongodb.net/food?retryWrites=true&w=majority"
+    // "mongodb+srv://panthinabin7:wg86pPSRKVMb2Aau@cluster0.9g3njsv.mongodb.net/food?retryWrites=true&w=majority"
+    process.env.MONGO_URI
   );
 
   console.log("database connected");
@@ -19,6 +21,6 @@ app.use(express.json());
 app.use("/", productRouter.router);
 app.use("/api/", userRouter.router);
 
-app.listen(5000, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server is running...");
 });
