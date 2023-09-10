@@ -3,8 +3,6 @@ const app = express();
 const mongoose = require("mongoose");
 const productRouter = require("./routes/product.js");
 
-app.use(express.json());
-
 main().catch((err) => console.log(err));
 
 async function main() {
