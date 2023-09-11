@@ -2,8 +2,10 @@ const express = require("express");
 const router = express.Router();
 const model = require("../model/User");
 const User = model.User;
-
 const { body, validationResult } = require("express-validator");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const jwtSecret = "Mynameisnabinpanthifromarghak$#a";
 
 router.post(
   "/createuser",
@@ -16,10 +18,14 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+
+    const salt = await bcrypt.genSalt(10); //function of bcrypt as async
+    let secPassword = await bcrypt.hash(req.body.password, salt); // hash has 2 parameter,1st value jsko hash create garna xa, 2nd salt  to make it even more secure
+
     try {
       await User.create({
         name: req.body.name,
-        password: req.body.password,
+        password: secPassword,
         email: req.body.email,
         location: req.body.location,
       });
@@ -48,17 +54,27 @@ router.post(
     try {
       let userData = await User.findOne({ email }); // give the whole document of the email
       if (!userData) {
-        return res
-          .status(400)
-          .json({ errors: "Try logging with correct credentials" });
+        return res.status(400).json({
+          errors: "Try logging with correct credentials not found user",
+        });
       }
-      if (req.body.password !== userData.password) {
-        return res
-          .status(400)
-          .json({ errors: "Try logging with correct credentials" });
+      const pwdCompare = await bcrypt.compare(
+        req.body.password,
+        userData.password
+      );
+      if (!pwdCompare) {
+        return res.status(400).json({
+          errors: "Try logging with correct credentials something is wrong",
+        });
       }
-
-      return res.json({ success: true });
+      const data = {
+        // data has to be object, its necessary during signature
+        user: {
+          id: userData.id,
+        },
+      };
+      const authToken = jwt.sign(data, jwtSecret); // data=payload, jwtSecret=secret
+      return res.json({ success: true, authToken: authToken });
     } catch (err) {
       console.log(err);
       res.json({ success: false });
