@@ -4,7 +4,7 @@ const app = express();
 const mongoose = require("mongoose");
 const productRouter = require("./routes/product.js");
 const userRouter = require("./routes/CreateUser.js");
-
+const cors = require("cors");
 main().catch((err) => console.log(err));
 
 async function main() {
@@ -17,6 +17,7 @@ async function main() {
 }
 
 // body parser
+app.use(cors());
 app.use(express.json());
 app.use("/", productRouter.router);
 app.use("/api/", userRouter.router);
