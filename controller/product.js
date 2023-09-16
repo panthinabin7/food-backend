@@ -11,10 +11,8 @@ exports.getProducts = async (req, res) => {
   global.food_items = products;
   global.food_category = productCategory;
 
-  const data = {
-    food_items: products,
-    food_category: productCategory,
-  };
+  const data = [products, productCategory];
 
   res.json(data);
+  // res.send(products, productCategory);
 };
